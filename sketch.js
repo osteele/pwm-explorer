@@ -5,6 +5,7 @@ const valueX = 260;
 
 let periodSlider;
 let dutyCycleSlider;
+let showAverageCheckbox;
 
 function setup() {
   createCanvas(windowWidth, 350);
@@ -21,20 +22,25 @@ function setup() {
   dutyCycleSlider.elt.onchange = redraw;
   dutyCycleSlider.elt.onmousemove = redraw;
 
-  redraw();
+  showAverageCheckbox = createCheckbox('Average voltage').class('show-average')
+  showAverageCheckbox.elt.onchange = redraw;
+
+  noLoop();
 }
 
 function draw() {
   background(255);
 
+  const showAverage = showAverageCheckbox.checked();
   const period = periodSlider.value();
   const dutyCycle = dutyCycleSlider.value();
   const xPeriod = max(period / 2, 1);
 
   // draw the graph
-  let x = 0;
-
+  fill(0, 102, 153);
+  noStroke();
   beginShape();
+  let x = 0;
   vertex(x, Y_LOW);
   while (x < width) {
     let x1 = x + xPeriod * dutyCycle;
@@ -47,9 +53,17 @@ function draw() {
   }
   endShape(CLOSE);
 
+  if (showAverage) {
+    fill(0, 153, 102, 50);
+    stroke(0, 153, 102);
+    const y = lerp(Y_LOW, Y_HIGH, dutyCycle);
+    rect(0, y, width, Y_LOW - y);
+  }
+
   // draw the labels
   textSize(32);
   fill(0, 102, 153, 100);
+  noStroke();
   text("Period:", labelX, 230);
   text("Duty Cycle:", labelX, 280);
   text("Frequency:", labelX, 330);
