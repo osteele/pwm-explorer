@@ -1,10 +1,13 @@
+const Y_HIGH = 20;
+const Y_LOW = 150;
+const labelX = 10;
+const valueX = 260;
+
 let periodSlider;
 let dutyCycleSlider;
 
-// let lastMillis = 0;
-
 function setup() {
-  createCanvas(800, 350);
+  createCanvas(windowWidth, 350);
 
   createDiv('Period').class('label')
   periodSlider = createSlider(1, 1000, 200);
@@ -21,15 +24,12 @@ function draw() {
   let period = periodSlider.value();
   let dutyCycle = dutyCycleSlider.value();
 
-  let xPeriod = period / 2;
-  console.info(period, xPeriod, dutyCycle)
+  let xPeriod = max(period / 2, 1);
 
   background(255);
 
   // draw the graph
   let x = 0;
-  const Y_HIGH = 20;
-  const Y_LOW = 150;
 
   beginShape();
   vertex(x, Y_LOW);
@@ -45,15 +45,15 @@ function draw() {
   endShape(CLOSE);
 
   // draw the labels
-  let xLabels = 10;
-  let xValues = 260;
   textSize(32);
   fill(0, 102, 153, 100);
-  text("Period:", xLabels, 230);
-  text("Duty Cycle:", xLabels, 280);
-  text("Frequency:", xLabels, 330);
+  text("Period:", labelX, 230);
+  text("Duty Cycle:", labelX, 280);
+  text("Frequency:", labelX, 330);
   fill(0, 102, 153);
-  text(period / 1000.0 + " ms", xValues, 230);
-  text(dutyCycle * 100 + "%", xValues, 280);
-  text(1000000.0 / period + " Hz", xValues, 330);
+  text(formatNumber(period / 1000) + " ms", valueX, 230);
+  text(Math.round(dutyCycle * 100) + "%", valueX, 280);
+  text(formatNumber(1000000 / period) + " Hz", valueX, 330);
 }
+
+const formatNumber = n => String(n).replace(/(\.\d{2})\d+/, '$1')
