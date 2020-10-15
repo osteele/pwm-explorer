@@ -9,24 +9,27 @@ let dutyCycleSlider;
 function setup() {
   createCanvas(windowWidth, 350);
 
-  createDiv('Period').class('label')
-  periodSlider = createSlider(1, 1000, 200);
-  // periodSlider.elt.onchange = redraw;
+  periodSlider = createSlider(1, 1000, 200)
+    .position(450, 80 + 230)
+    .style('width', '300px');
+  periodSlider.elt.onchange = redraw;
+  periodSlider.elt.onmousemove = redraw;
 
-  createDiv('Duty Cycle').class('label')
-  dutyCycleSlider = createSlider(0.01, 1, 0.5, 0.01);
-  // dutyCycleSlider.elt.onchange = redraw;
+  dutyCycleSlider = createSlider(0.01, 1, 0.5, 0.01)
+    .position(450, 80 + 280)
+    .style('width', '300px');
+  dutyCycleSlider.elt.onchange = redraw;
+  dutyCycleSlider.elt.onmousemove = redraw;
 
-  // noLoop();
+  redraw();
 }
 
 function draw() {
-  let period = periodSlider.value();
-  let dutyCycle = dutyCycleSlider.value();
-
-  let xPeriod = max(period / 2, 1);
-
   background(255);
+
+  const period = periodSlider.value();
+  const dutyCycle = dutyCycleSlider.value();
+  const xPeriod = max(period / 2, 1);
 
   // draw the graph
   let x = 0;
