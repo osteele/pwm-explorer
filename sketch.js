@@ -1,14 +1,14 @@
 const Y_HIGH = 20;
 const Y_LOW = 150;
 const labelX = 10;
-const valueX = 260;
+const valueX = 220;
 
 let periodSlider;
 let dutyCycleSlider;
 let showAverageCheckbox;
 
 function setup() {
-  createCanvas(windowWidth, 350);
+  createCanvas(windowWidth, 400);
 
   periodSlider = createSlider(1, 1000, 200)
     .position(450, 80 + 230)
@@ -22,7 +22,8 @@ function setup() {
   dutyCycleSlider.elt.onchange = redraw;
   dutyCycleSlider.elt.onmousemove = redraw;
 
-  showAverageCheckbox = createCheckbox('Average voltage').class('show-average')
+  showAverageCheckbox = createCheckbox('Show').class('show-average')
+    .position(450, 80 + 380 - 10)
   showAverageCheckbox.elt.onchange = redraw;
 
   noLoop();
@@ -54,10 +55,16 @@ function draw() {
   endShape(CLOSE);
 
   if (showAverage) {
-    fill(0, 153, 102, 50);
-    stroke(0, 153, 102);
+    const c = lerpColor(color('black'), color('red'), dutyCycle)
     const y = lerp(Y_LOW, Y_HIGH, dutyCycle);
+    const [r, g, b] = c.levels;
+    noStroke();
+    fill(r, g, b, 100);
     rect(0, y, width, Y_LOW - y);
+    noFill();
+    stroke(r, g, b, 200);
+    strokeWeight(4);
+    line(0, y, width, y);
   }
 
   // draw the labels
@@ -67,10 +74,15 @@ function draw() {
   text("Period:", labelX, 230);
   text("Duty Cycle:", labelX, 280);
   text("Frequency:", labelX, 330);
+  fill(200, 25, 25, 100);
+  text("Average:", labelX, 380);
+
   fill(0, 102, 153);
   text(formatNumber(period / 1000) + " ms", valueX, 230);
   text(Math.round(dutyCycle * 100) + "%", valueX, 280);
   text(Math.round(1000000 / period) + " Hz", valueX, 330);
+  fill(200, 25, 25);
+  text(formatNumber(dutyCycle * 5) + " V", valueX, 380);
 }
 
 const formatNumber = n => String(n).replace(/(\.\d{2})\d+/, '$1')
