@@ -53,7 +53,7 @@ function draw() {
   fill(0, 102, 153);
   text(formatNumber(period / 1000) + " ms", valueX, 230);
   text(Math.round(dutyCycle * 100) + "%", valueX, 280);
-  text(formatNumber(1000000 / period) + " Hz", valueX, 330);
+  text(Math.round(1000000 / period) + " Hz", valueX, 330);
 }
 
 const formatNumber = n => String(n).replace(/(\.\d{2})\d+/, '$1')
