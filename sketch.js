@@ -11,7 +11,7 @@ function setup() {
   // periodSlider.elt.onchange = redraw;
 
   createDiv('Duty Cycle').class('label')
-  dutyCycleSlider = createSlider(0, 1, 0.5, 0.01);
+  dutyCycleSlider = createSlider(0.01, 1, 0.5, 0.01);
   // dutyCycleSlider.elt.onchange = redraw;
 
   // noLoop();
