@@ -39,7 +39,8 @@ function draw() {
 
   // draw the graph
   fill(0, 102, 153);
-  noStroke();
+  stroke(0, 102, 153);
+  strokeWeight(1);
   beginShape();
   let x = 0;
   vertex(x, Y_LOW);
