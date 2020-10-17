@@ -1,6 +1,7 @@
 // Layout
-const Y_HIGH = 20; // y position of high voltage
-const Y_LOW = 150; // y position of low voltate
+const PWM_HIGH_Y = 20; // y position of high voltage
+const PWM_LOW_Y = 150; // y position of low voltate
+const PWM_STROKE_WIDTH = 2;
 const LABEL_X = 10;
 const VALUE_X = 220;
 const CONTROLS_X = 450;
@@ -72,31 +73,31 @@ function draw() {
   noStroke();
   beginShape();
   let x = 0;
-  vertex(x, Y_LOW);
+  vertex(x, PWM_LOW_Y);
   while (x < width) {
     let x1 = x + xPeriod * dutyCycle;
     let x2 = x + xPeriod;
     if (dutyCycle > 0) {
-      vertex(x, Y_HIGH);
-      vertex(x1, Y_HIGH);
-      rect(x, Y_HIGH, x1 - x, Y_LOW - Y_HIGH)
+      vertex(x, PWM_HIGH_Y);
+      vertex(x1, PWM_HIGH_Y);
+      rect(x, PWM_HIGH_Y, x1 - x, PWM_LOW_Y - PWM_HIGH_Y)
     }
-    vertex(x1, Y_LOW - 1);
-    vertex(x2, Y_LOW - 1);
+    vertex(x1, PWM_LOW_Y - PWM_STROKE_WIDTH / 2);
+    vertex(x2, PWM_LOW_Y - PWM_STROKE_WIDTH / 2);
     x = x2;
   }
   noFill();
   stroke(PWM_STROKE_COLOR);
-  strokeWeight(2);
+  strokeWeight(PWM_STROKE_WIDTH);
   endShape();
 
   if (showAverage) {
     const c = lerpColor(color('black'), color('red'), dutyCycle)
     const [r, g, b] = c.levels;
-    const y = lerp(Y_LOW, Y_HIGH, dutyCycle);
+    const y = lerp(PWM_LOW_Y, PWM_HIGH_Y, dutyCycle);
     noStroke();
     fill(r, g, b, 100);
-    rect(0, y, width, Y_LOW - y);
+    rect(0, y, width, PWM_LOW_Y - y);
     noFill();
     stroke(r, g, b, 200);
     strokeWeight(4);
