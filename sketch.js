@@ -19,7 +19,7 @@ function setup() {
   });
 
   let frequencySlider = createSlider(1000000 / 200, 1000000 / 10, 1000000 / period)
-    .position(450, 80 + 330)
+    .position(450, 80 + 280)
     .style('width', '300px');
   setControlCallback(frequencySlider, (value) => {
     period = 1000000 / value;
@@ -27,7 +27,7 @@ function setup() {
   });
 
   let dutyCycleSlider = createSlider(0, 1, dutyCycle, 0.01)
-    .position(450, 80 + 280)
+    .position(450, 80 + 330)
     .style('width', '300px');
   setControlCallback(dutyCycleSlider, (value) => {
     dutyCycle = value;
@@ -47,7 +47,6 @@ function setControlCallback(control, valueSetter) {
     valueSetter(control.value());
     redraw();
   }
-  control.elt.onmousemove = handler;
   control.elt.onchange = handler;
 }
 
@@ -93,15 +92,15 @@ function draw() {
   fill(0, 102, 153, 100);
   noStroke();
   text("Period:", labelX, 230);
-  text("Duty Cycle:", labelX, 280);
-  text("Frequency:", labelX, 330);
+  text("Frequency:", labelX, 280);
+  text("Duty Cycle:", labelX, 330);
   fill(200, 25, 25, 100);
   text("Average:", labelX, 380);
 
   fill(0, 102, 153);
   text(formatNumber(period / 1000) + " ms", valueX, 230);
-  text(Math.round(dutyCycle * 100) + "%", valueX, 280);
-  text(Math.round(1000000 / period) + " Hz", valueX, 330);
+  text(Math.round(1000000 / period) + " Hz", valueX, 280);
+  text(Math.round(dutyCycle * 100) + "%", valueX, 330);
   fill(200, 25, 25);
   text(formatNumber(dutyCycle * 5) + " V", valueX, 380);
 }
