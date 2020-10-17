@@ -1,43 +1,61 @@
-const Y_HIGH = 20;
-const Y_LOW = 150;
+const Y_HIGH = 20; // y position of high voltage
+const Y_LOW = 150; // y position of low voltate
 const labelX = 10;
 const valueX = 220;
 
-let periodSlider;
-let dutyCycleSlider;
-let showAverageCheckbox;
+let period = 200;
+let dutyCycle = 0.5;
+let showAverage = false;
 
 function setup() {
   createCanvas(windowWidth, 400);
 
-  periodSlider = createSlider(1, 1000, 200)
+  let periodSlider = createSlider(10, 2000, period)
     .position(450, 80 + 230)
     .style('width', '300px');
-  periodSlider.elt.onchange = redraw;
-  periodSlider.elt.onmousemove = redraw;
+  setControlCallback(periodSlider, (value) => {
+    period = value;
+    frequencySlider.value(1000000 / period);
+  });
 
-  dutyCycleSlider = createSlider(0.01, 1, 0.5, 0.01)
+  let frequencySlider = createSlider(1000000 / 200, 1000000 / 10, 1000000 / period)
+    .position(450, 80 + 330)
+    .style('width', '300px');
+  setControlCallback(frequencySlider, (value) => {
+    period = 1000000 / value;
+    periodSlider.value(period);
+  });
+
+  let dutyCycleSlider = createSlider(0, 1, dutyCycle, 0.01)
     .position(450, 80 + 280)
     .style('width', '300px');
-  dutyCycleSlider.elt.onchange = redraw;
-  dutyCycleSlider.elt.onmousemove = redraw;
+  setControlCallback(dutyCycleSlider, (value) => {
+    dutyCycle = value;
+  });
 
-  showAverageCheckbox = createCheckbox('Show').class('show-average')
+  let showAverageCheckbox = createCheckbox('Show').class('show-average')
     .position(450, 80 + 380 - 10)
-  showAverageCheckbox.elt.onchange = redraw;
+  setControlCallback(showAverageCheckbox, () => {
+    showAverage = showAverageCheckbox.checked();
+  });
 
   noLoop();
 }
 
-function draw() {
-  background(255);
+function setControlCallback(control, valueSetter) {
+  function handler() {
+    valueSetter(control.value());
+    redraw();
+  }
+  control.elt.onmousemove = handler;
+  control.elt.onchange = handler;
+}
 
-  const showAverage = showAverageCheckbox.checked();
-  const period = periodSlider.value();
-  const dutyCycle = dutyCycleSlider.value();
-  const xPeriod = max(period / 2, 1);
+function draw() {
+  background('white');
 
   // draw the graph
+  const xPeriod = max(period / 2, 1);
   fill(0, 102, 153);
   stroke(0, 102, 153);
   strokeWeight(1);
@@ -47,8 +65,10 @@ function draw() {
   while (x < width) {
     let x1 = x + xPeriod * dutyCycle;
     let x2 = x + xPeriod;
-    vertex(x, Y_HIGH);
-    vertex(x1, Y_HIGH);
+    if (dutyCycle > 0) {
+      vertex(x, Y_HIGH);
+      vertex(x1, Y_HIGH);
+    }
     vertex(x1, Y_LOW);
     vertex(x2, Y_LOW);
     x = x2;
@@ -57,8 +77,8 @@ function draw() {
 
   if (showAverage) {
     const c = lerpColor(color('black'), color('red'), dutyCycle)
-    const y = lerp(Y_LOW, Y_HIGH, dutyCycle);
     const [r, g, b] = c.levels;
+    const y = lerp(Y_LOW, Y_HIGH, dutyCycle);
     noStroke();
     fill(r, g, b, 100);
     rect(0, y, width, Y_LOW - y);
