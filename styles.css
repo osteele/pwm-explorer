@@ -2,16 +2,15 @@ body {
   margin: 10px;
   overflow: hidden;
 }
-
-canvas {
-  position: relative;
-  left: -10px;
-}
-
 h1 {
   color: gray;
   text-align: center;
   font-size: 40px;
+}
+
+canvas {
+  position: relative;
+  left: -10px;
 }
 
 footer {
