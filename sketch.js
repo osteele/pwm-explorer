@@ -3,26 +3,28 @@ const Y_LOW = 150; // y position of low voltate
 const labelX = 10;
 const valueX = 220;
 
-let period = 200;
+const msPerSecond = 1000;
+
+let period = 0.2; // in ms
 let dutyCycle = 0.5;
 let showAverage = false;
 
 function setup() {
   createCanvas(windowWidth, 400);
 
-  let periodSlider = createSlider(10, 2000, period)
+  let periodSlider = createSlider(.01, 2, period, 0.01)
     .position(450, 80 + 230)
     .style('width', '300px');
   setControlCallback(periodSlider, (value) => {
     period = value;
-    frequencySlider.value(1000000 / period);
+    frequencySlider.value(msPerSecond / period);
   });
 
-  let frequencySlider = createSlider(1000000 / 200, 1000000 / 10, 1000000 / period)
+  let frequencySlider = createSlider(msPerSecond / 2, msPerSecond / .01, msPerSecond / period)
     .position(450, 80 + 280)
     .style('width', '300px');
   setControlCallback(frequencySlider, (value) => {
-    period = 1000000 / value;
+    period = msPerSecond / value;
     periodSlider.value(period);
   });
 
@@ -48,13 +50,14 @@ function setControlCallback(control, valueSetter) {
     redraw();
   }
   control.elt.onchange = handler;
+  control.elt.onmousemove = handler;
 }
 
 function draw() {
   background('white');
 
   // draw the graph
-  const xPeriod = max(period / 2, 1);
+  const xPeriod = max(msPerSecond * period / 2, 1);
   fill(0, 102, 153);
   stroke(0, 102, 153);
   strokeWeight(1);
@@ -87,7 +90,7 @@ function draw() {
     line(0, y, width, y);
   }
 
-  // draw the labels
+  // labels
   textSize(32);
   fill(0, 102, 153, 100);
   noStroke();
@@ -97,12 +100,15 @@ function draw() {
   fill(200, 25, 25, 100);
   text("Average:", labelX, 380);
 
+  // values
+  const frequency = msPerSecond / period;
   fill(0, 102, 153);
-  text(formatNumber(period / 1000) + " ms", valueX, 230);
-  text(Math.round(1000000 / period) + " Hz", valueX, 280);
-  text(Math.round(dutyCycle * 100) + "%", valueX, 330);
+  text(`${formatNumber(period)} ms`, valueX, 230);
+  text(`${Math.round(frequency)} Hz`, valueX, 280);
+  text(`${Math.round(dutyCycle * 100)}%`, valueX, 330);
   fill(200, 25, 25);
-  text(formatNumber(dutyCycle * 5) + " V", valueX, 380);
+  text(`${formatNumber(dutyCycle * 5)} V`, valueX, 380);
 }
 
-const formatNumber = n => String(n).replace(/(\.\d{2})\d+/, '$1')
+const formatNumber = n =>
+  String(n).replace(/(\.\d{2})\d+/, '$1');
