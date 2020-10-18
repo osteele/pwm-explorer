@@ -68,6 +68,7 @@ function setControlCallback(control, valueSetter) {
   }
   control.elt.onchange = handler;
   control.elt.onmousemove = (e) => { if (e.buttons) handler(); }
+  control.elt.ontouchmove = handler;
 }
 
 function draw() {
