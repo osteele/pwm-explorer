@@ -2,10 +2,11 @@
 const PWM_HIGH_Y = 20; // y position of high voltage
 const PWM_LOW_Y = 150; // y position of low voltate
 const PWM_STROKE_WIDTH = 2;
+
 const LABEL_X = 10;
 const VALUE_X = 220;
 const CONTROLS_X = 450;
-const HEADER_HEIGHT = 80;
+
 const PERIOD_LABEL_Y = 230;
 const FREQUENCY_LABEL_Y = PERIOD_LABEL_Y + 50;
 const DUTY_CYCLE_LABEL_Y = FREQUENCY_LABEL_Y + 50;
@@ -22,9 +23,10 @@ let showAverage = false;
 
 function setup() {
   createCanvas(windowWidth, 400);
+  const controlOffsetY = document.getElementsByTagName('canvas')[0].offsetTop - 18;
 
   let periodSlider = createSlider(.01, 2, period, 0.01)
-    .position(CONTROLS_X, HEADER_HEIGHT + PERIOD_LABEL_Y)
+    .position(CONTROLS_X, controlOffsetY + PERIOD_LABEL_Y)
     .style('width', '300px');
   setControlCallback(periodSlider, (value) => {
     period = value;
@@ -32,7 +34,7 @@ function setup() {
   });
 
   let frequencySlider = createSlider(msPerSecond / 2, msPerSecond / .01, msPerSecond / period)
-    .position(CONTROLS_X, HEADER_HEIGHT + FREQUENCY_LABEL_Y)
+    .position(CONTROLS_X, controlOffsetY + FREQUENCY_LABEL_Y)
     .style('width', '300px');
   setControlCallback(frequencySlider, (value) => {
     period = msPerSecond / value;
@@ -40,14 +42,14 @@ function setup() {
   });
 
   let dutyCycleSlider = createSlider(0, 1, dutyCycle, 0.01)
-    .position(CONTROLS_X, HEADER_HEIGHT + DUTY_CYCLE_LABEL_Y)
+    .position(CONTROLS_X, controlOffsetY + DUTY_CYCLE_LABEL_Y)
     .style('width', '300px');
   setControlCallback(dutyCycleSlider, (value) => {
     dutyCycle = value;
   });
 
   let showAverageCheckbox = createCheckbox('Show').class('show-average')
-    .position(CONTROLS_X, HEADER_HEIGHT + SHOW_AVERAGE_LABEL_Y - 10)
+    .position(CONTROLS_X, controlOffsetY + SHOW_AVERAGE_LABEL_Y - 8)
   setControlCallback(showAverageCheckbox, () => {
     showAverage = showAverageCheckbox.checked();
   });
