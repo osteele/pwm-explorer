@@ -26,6 +26,7 @@ let showAverage = false;
 
 function setup() {
   createCanvas(windowWidth, SHOW_AVERAGE_LABEL_Y + 50);
+
   const controlOffsetY = document.getElementsByTagName('canvas')[0].offsetTop - 18
     + (narrow ? 25 : 0);
 
@@ -48,13 +49,12 @@ function setup() {
   let dutyCycleSlider = createSlider(0, 1, dutyCycle, 0.01)
     .position(CONTROLS_X, controlOffsetY + DUTY_CYCLE_LABEL_Y)
     .style('width', '300px');
-  setControlCallback(dutyCycleSlider, (value) => {
-    dutyCycle = value;
-  });
+  setControlCallback(dutyCycleSlider, (value) => dutyCycle = value);
 
   let showAverageCheckbox = createCheckbox('Show').class('show-average')
     .position(CONTROLS_X, controlOffsetY + SHOW_AVERAGE_LABEL_Y - 8)
   setControlCallback(showAverageCheckbox, () => {
+    s
     showAverage = showAverageCheckbox.checked();
   });
 
@@ -75,7 +75,7 @@ function draw() {
   background('white');
 
   // draw the graph
-  const xPeriod = max(msPerSecond * period / 2, 1);
+  const xPeriod = dutyCycle === 1 ? width : max(msPerSecond * period / 2, 1);
   fill(PWM_FILL_COLOR);
   noStroke();
   beginShape();
