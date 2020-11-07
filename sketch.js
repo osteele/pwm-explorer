@@ -18,29 +18,39 @@ const SHOW_AVERAGE_LABEL_Y = DUTY_CYCLE_LABEL_Y + LINE_HEIGHT;
 const PWM_FILL_COLOR = '#0066BB80';
 const PWM_STROKE_COLOR = '#0066BB';
 
-const msPerSecond = 1000;
+const MS_PER_SECOND = 1000;
+
+let headerHeight;
 
 let period = 0.2; // in ms
 let dutyCycle = 0.5;
-let showAverage = false;
+let showAverageVoltage = false;
+
+let prevMillis;
+let servoAngle = 0;
+
+function preload() {
+  servoImage = loadImage("assets/servo-fan.png");
+}
 
 function setup() {
-  createCanvas(windowWidth, SHOW_AVERAGE_LABEL_Y + 50);
+  const header = document.getElementById("header");
+  headerHeight = header.offsetTop + header.offsetHeight;
+  createCanvas(windowWidth, headerHeight + SHOW_AVERAGE_LABEL_Y + 50);
 
-  const controlOffsetY = document.getElementsByTagName('canvas')[0].offsetTop - 18
-    + (IS_NARROW_WINDOW ? 25 : 0);
+  const controlOffsetY = headerHeight - 18 + (IS_NARROW_WINDOW ? 25 : 0);
 
   const periodSlider = createSlider(.01, 2, period, 0.01)
     .position(CONTROLS_X, controlOffsetY + PERIOD_LABEL_Y)
   setControlCallback(periodSlider, (value) => {
     period = value;
-    frequencySlider.value(msPerSecond / period);
+    frequencySlider.value(MS_PER_SECOND / period);
   });
 
-  const frequencySlider = createSlider(msPerSecond / 2, msPerSecond / .01, msPerSecond / period)
+  const frequencySlider = createSlider(MS_PER_SECOND / 2, MS_PER_SECOND / .01, MS_PER_SECOND / period)
     .position(CONTROLS_X, controlOffsetY + FREQUENCY_LABEL_Y)
   setControlCallback(frequencySlider, (value) => {
-    period = msPerSecond / value;
+    period = MS_PER_SECOND / value;
     periodSlider.value(period);
   });
 
@@ -51,10 +61,11 @@ function setup() {
   const showAverageCheckbox = createCheckbox('Show').class('show-average')
     .position(CONTROLS_X, controlOffsetY + SHOW_AVERAGE_LABEL_Y - 8)
   setControlCallback(showAverageCheckbox, () => {
-    showAverage = showAverageCheckbox.checked();
+    showAverageVoltage = showAverageCheckbox.checked();
   });
 
-  noLoop();
+  prevMillis = millis();
+  // noLoop();
 }
 
 function setControlCallback(control, valueSetter) {
@@ -68,17 +79,21 @@ function setControlCallback(control, valueSetter) {
 }
 
 function draw() {
-  background('white');
+  clear();
+
+  translate(0, headerHeight);
   scope();
   labels();
+  servo();
 }
 
 function scope() {
-  const xPeriod = dutyCycle === 1 ? width : max(msPerSecond * period / 2, 1);
+  const xPeriod = dutyCycle === 1 ? width : max(MS_PER_SECOND * period / 2, 1);
+
   fill(PWM_FILL_COLOR);
   noStroke();
   beginShape();
-  let x = 0;
+  let x = -1;
   vertex(x, PWM_LOW_Y);
   while (x < width) {
     let x1 = x + xPeriod * dutyCycle;
@@ -97,7 +112,7 @@ function scope() {
   strokeWeight(PWM_STROKE_WIDTH);
   endShape();
 
-  if (showAverage) {
+  if (showAverageVoltage) {
     const c = lerpColor(color('black'), color('red'), dutyCycle)
     const [r, g, b] = c.levels;
     const y = lerp(PWM_LOW_Y, PWM_HIGH_Y, dutyCycle);
@@ -109,6 +124,34 @@ function scope() {
     strokeWeight(4);
     line(0, y, width, y);
   }
+}
+
+function servo() {
+  const SERVO_X = 50;
+  const SERVO_Y = -20;
+  const SERVO_MAX_RPMS = 20;
+
+  const curMillis = millis();
+  const prevAngle = servoAngle;
+  servoAngle += SERVO_MAX_RPMS * dutyCycle * (curMillis - prevMillis) / MS_PER_SECOND;
+  prevMillis = curMillis;
+
+  translate(SERVO_X, SERVO_Y);
+  imageMode(CENTER);
+  scale(1 / 9);
+
+  // console.info('from', prevAngle, 'to', servoAngle, 'in', (servoAngle - prevAngle) / 0.1)
+  // for (let angle = prevAngle; (angle += 0.1) < servoAngle;) {
+  //   push();
+  //   rotate(angle);
+  //   // tint(255, 0, 0, 20);
+  //   tint(255, 128)
+  //   image(servoImage, 0, 0);
+  //   pop();
+  // }
+
+  rotate(servoAngle);
+  image(servoImage, 0, 0);
 }
 
 function labels() {
@@ -123,7 +166,7 @@ function labels() {
   text("Average:", LABEL_X, SHOW_AVERAGE_LABEL_Y);
 
   // values
-  const frequency = msPerSecond / period;
+  const frequency = MS_PER_SECOND / period;
   fill(0, 102, 153);
   text(`${formatNumber(period)} ms`, VALUE_X, PERIOD_LABEL_Y);
   text(`${Math.round(frequency)} Hz`, VALUE_X, FREQUENCY_LABEL_Y);
@@ -134,3 +177,9 @@ function labels() {
 
 const formatNumber = n =>
   String(n).replace(/(\.\d{2})\d+/, '$1');
+
+function rotateAbout(angle, x, y) {
+  translate(x, y);
+  rotate(angle);
+  translate(-x, -y);
+}
