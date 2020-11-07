@@ -3,19 +3,19 @@ const PWM_HIGH_Y = 20; // y position of high voltage
 const PWM_LOW_Y = 150; // y position of low voltate
 const PWM_STROKE_WIDTH = 2;
 
-const narrow = window.innerWidth <= 400;
+const IS_NARROW_WINDOW = window.innerWidth <= 400;
 
 const LABEL_X = 10;
-const VALUE_X = narrow ? 200 : 220;
-const CONTROLS_X = narrow ? 10 : 450;
+const VALUE_X = IS_NARROW_WINDOW ? 200 : 220;
+const CONTROLS_X = IS_NARROW_WINDOW ? 10 : 450;
 
-const LINE_HEIGHT = narrow ? 80 : 50;
-const PERIOD_LABEL_Y = narrow ? 200 : 230;
+const LINE_HEIGHT = IS_NARROW_WINDOW ? 80 : 50;
+const PERIOD_LABEL_Y = IS_NARROW_WINDOW ? 200 : 230;
 const FREQUENCY_LABEL_Y = PERIOD_LABEL_Y + LINE_HEIGHT;
 const DUTY_CYCLE_LABEL_Y = FREQUENCY_LABEL_Y + LINE_HEIGHT;
 const SHOW_AVERAGE_LABEL_Y = DUTY_CYCLE_LABEL_Y + LINE_HEIGHT;
 
-const PWM_FILL_COLOR = '#0066BBA0';
+const PWM_FILL_COLOR = '#0066BB80';
 const PWM_STROKE_COLOR = '#0066BB';
 
 const msPerSecond = 1000;
@@ -28,7 +28,7 @@ function setup() {
   createCanvas(windowWidth, SHOW_AVERAGE_LABEL_Y + 50);
 
   const controlOffsetY = document.getElementsByTagName('canvas')[0].offsetTop - 18
-    + (narrow ? 25 : 0);
+    + (IS_NARROW_WINDOW ? 25 : 0);
 
   const periodSlider = createSlider(.01, 2, period, 0.01)
     .position(CONTROLS_X, controlOffsetY + PERIOD_LABEL_Y)
@@ -69,8 +69,11 @@ function setControlCallback(control, valueSetter) {
 
 function draw() {
   background('white');
+  scope();
+  labels();
+}
 
-  // draw the graph
+function scope() {
   const xPeriod = dutyCycle === 1 ? width : max(msPerSecond * period / 2, 1);
   fill(PWM_FILL_COLOR);
   noStroke();
@@ -106,7 +109,9 @@ function draw() {
     strokeWeight(4);
     line(0, y, width, y);
   }
+}
 
+function labels() {
   // labels
   textSize(32);
   fill(0, 102, 153, 100);
