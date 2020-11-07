@@ -51,7 +51,6 @@ function setup() {
   const showAverageCheckbox = createCheckbox('Show').class('show-average')
     .position(CONTROLS_X, controlOffsetY + SHOW_AVERAGE_LABEL_Y - 8)
   setControlCallback(showAverageCheckbox, () => {
-    s
     showAverage = showAverageCheckbox.checked();
   });
 
