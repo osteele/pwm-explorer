@@ -10,8 +10,8 @@ Drag the sliders to set the period, frequency, and duty cycle. Click the checkbo
 
 ## Related
 
-[`map` explorer](https://osteele.github.io/map-explorer/) visualizes the
-Arduino/Processing/p5.js `map()` function.
+[Map explorer](https://osteele.github.io/map-explorer/) visualizes the
+Arduino / Processing / p5.js `map()` function.
 
 ## License
 
