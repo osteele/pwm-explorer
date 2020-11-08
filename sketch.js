@@ -7,10 +7,14 @@ const PWM_STROKE_WIDTH = 2;
 
 let headerHeight;
 
+// model options
 let period = 0.2; // in ms
 let dutyCycle = 0.5;
+
+// display options
 let showAverageVoltage = false;
 
+// simulation state
 let prevMillis;
 let servoAngle = 0;
 
@@ -21,30 +25,31 @@ function preload() {
 function setup() {
   const header = document.getElementById("header");
   headerHeight = header.offsetTop + header.offsetHeight;
+  calculateLayout();
   createCanvas(windowWidth, headerHeight + layout.showAverageLabelY + 50);
 
   const controlOffsetY = headerHeight - 18 + (IS_NARROW_WINDOW ? 25 : 0);
 
   const periodSlider = createSlider(.01, 2, period, 0.01)
-    .position(layout.controlsX, layout.controlOffsetY + layout.periodLabelY)
+    .position(layout.controlsX, controlOffsetY + layout.periodLabelY)
   setControlCallback(periodSlider, (value) => {
     period = value;
     frequencySlider.value(MS_PER_SECOND / period);
   });
 
   const frequencySlider = createSlider(MS_PER_SECOND / 2, MS_PER_SECOND / .01, MS_PER_SECOND / period)
-    .position(layout.controlsX, layout.controlOffsetY + layout.frequencyLabelY)
+    .position(layout.controlsX, controlOffsetY + layout.frequencyLabelY)
   setControlCallback(frequencySlider, (value) => {
     period = MS_PER_SECOND / value;
     periodSlider.value(period);
   });
 
   const dutyCycleSlider = createSlider(0, 1, dutyCycle, 0.01)
-    .position(layout.controlsX, layout.controlOffsetY + layout.dutyCycleLabelY)
+    .position(layout.controlsX, controlOffsetY + layout.dutyCycleLabelY)
   setControlCallback(dutyCycleSlider, (value) => dutyCycle = value);
 
   const showAverageCheckbox = createCheckbox('Show').class('show-average')
-    .position(layout.controlsX, layout.controlOffsetY + layout.showAverageLabelY - 8)
+    .position(layout.controlsX, controlOffsetY + layout.showAverageLabelY - 8)
   setControlCallback(showAverageCheckbox, () => {
     showAverageVoltage = showAverageCheckbox.checked();
   });
