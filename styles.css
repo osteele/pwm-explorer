@@ -9,13 +9,22 @@ h1 {
   margin-bottom: 15px;
 }
 
-h1 #servo-animation {
+#servo-animation {
+  display: inline-block;
+  position: relative;
+  top: 5px;
+  width: 60px;
+  height: 38px;
+  margin-right: 5px;
+}
+
+#led-animation {
   display: inline-block;
   width: 60px;
   height: 38px;
-  position: relative;
-  top: 5px;
-  margin-right: 5px;
+  margin-left: 5px;
+  background: url(assets/LED.png) no-repeat;
+  background-size: contain;
 }
 
 @media (max-width: 600px) {

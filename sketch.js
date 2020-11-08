@@ -11,6 +11,7 @@ let dutyCycle = 0.5;
 
 // display options
 let showAverageVoltage = false;
+let servoImage, ledImage;
 
 // simulation state
 let prevMillis;
@@ -18,6 +19,7 @@ let servoAngle = 0;
 
 function preload() {
   servoImage = loadImage("assets/servo-fan.png");
+  ledImage = loadImage("assets/LED.png");
 }
 
 function setup() {
@@ -69,10 +71,12 @@ function draw() {
   push();
   translate(0, layout.headerHeight);
   scope();
-  labels();
+  if (showAverageVoltage) averageVoltage();
+  labelsAndValues();
   pop();
 
   servo();
+  led();
 }
 
 function scope() {
@@ -101,8 +105,9 @@ function scope() {
   stroke(PWM_STROKE_COLOR);
   strokeWeight(PWM_STROKE_WIDTH);
   endShape();
+}
 
-  if (showAverageVoltage) {
+function averageVoltage() {
     const c = lerpColor(color('black'), color('red'), dutyCycle)
     const [r, g, b] = c.levels;
     const y = lerp(PWM_LOW_Y, PWM_HIGH_Y, dutyCycle);
@@ -113,7 +118,6 @@ function scope() {
     stroke(r, g, b, 200);
     strokeWeight(4);
     line(0, y, width, y);
-  }
 }
 
 function servo() {
@@ -121,6 +125,7 @@ function servo() {
   servoAngle += SERVO_MAX_RPMS * dutyCycle * (curMillis - prevMillis) / MS_PER_SECOND;
   prevMillis = curMillis;
 
+  push();
   const elt = document.getElementById("servo-animation");
   translate(elt.offsetLeft + elt.offsetWidth / 2, elt.offsetTop + elt.offsetHeight / 2);
   scale(elt.offsetWidth / servoImage.width);
@@ -138,10 +143,32 @@ function servo() {
   // }
 
   rotate(servoAngle);
-  image(servoImage, 0, 0);
+  image(servoImage, 4, 0);
+  pop();
 }
 
-function labels() {
+function led() {
+  const elt = document.getElementById("led-animation");
+  const brightness = 255 * dutyCycle;
+
+  // push()
+  // translate(elt.offsetLeft, elt.offsetTop);
+  // imageMode(RIGHT)
+  // tint(brightness)
+  // scale(elt.offsetHeight / ledImage.height);
+  // image(ledImage, 0, 0);
+  // pop();
+
+  push();
+  translate(elt.offsetLeft + elt.offsetWidth / 2, elt.offsetTop + elt.offsetHeight / 2);
+  noStroke();
+  fill(255, 0, 0, brightness / 2);
+  ellipse(-9, -10, 21, 27);
+  fill(255, 0, 0, brightness);
+  pop();
+}
+
+function labelsAndValues() {
   // labels
   {
     const x = layout.labelX;
@@ -168,11 +195,6 @@ function labels() {
   }
 }
 
+// Limit to two decimals
 const formatNumber = n =>
   String(n).replace(/(\.\d{2})\d+/, '$1');
-
-function rotateAbout(angle, x, y) {
-  translate(x, y);
-  rotate(angle);
-  translate(-x, -y);
-}
