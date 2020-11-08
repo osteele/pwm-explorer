@@ -1,7 +1,9 @@
+const MS_PER_SECOND = 1000;
+const SERVO_MAX_RPMS = 20;
+
 const PWM_FILL_COLOR = '#0066BB80';
 const PWM_STROKE_COLOR = '#0066BB';
-
-const MS_PER_SECOND = 1000;
+const PWM_STROKE_WIDTH = 2;
 
 let headerHeight;
 
@@ -19,36 +21,35 @@ function preload() {
 function setup() {
   const header = document.getElementById("header");
   headerHeight = header.offsetTop + header.offsetHeight;
-  createCanvas(windowWidth, headerHeight + SHOW_AVERAGE_LABEL_Y + 50);
+  createCanvas(windowWidth, headerHeight + layout.showAverageLabelY + 50);
 
   const controlOffsetY = headerHeight - 18 + (IS_NARROW_WINDOW ? 25 : 0);
 
   const periodSlider = createSlider(.01, 2, period, 0.01)
-    .position(CONTROLS_X, controlOffsetY + PERIOD_LABEL_Y)
+    .position(layout.controlsX, layout.controlOffsetY + layout.periodLabelY)
   setControlCallback(periodSlider, (value) => {
     period = value;
     frequencySlider.value(MS_PER_SECOND / period);
   });
 
   const frequencySlider = createSlider(MS_PER_SECOND / 2, MS_PER_SECOND / .01, MS_PER_SECOND / period)
-    .position(CONTROLS_X, controlOffsetY + FREQUENCY_LABEL_Y)
+    .position(layout.controlsX, layout.controlOffsetY + layout.frequencyLabelY)
   setControlCallback(frequencySlider, (value) => {
     period = MS_PER_SECOND / value;
     periodSlider.value(period);
   });
 
   const dutyCycleSlider = createSlider(0, 1, dutyCycle, 0.01)
-    .position(CONTROLS_X, controlOffsetY + DUTY_CYCLE_LABEL_Y)
+    .position(layout.controlsX, layout.controlOffsetY + layout.dutyCycleLabelY)
   setControlCallback(dutyCycleSlider, (value) => dutyCycle = value);
 
   const showAverageCheckbox = createCheckbox('Show').class('show-average')
-    .position(CONTROLS_X, controlOffsetY + SHOW_AVERAGE_LABEL_Y - 8)
+    .position(layout.controlsX, layout.controlOffsetY + layout.showAverageLabelY - 8)
   setControlCallback(showAverageCheckbox, () => {
     showAverageVoltage = showAverageCheckbox.checked();
   });
 
   prevMillis = millis();
-  // noLoop();
 }
 
 function setControlCallback(control, valueSetter) {
@@ -71,6 +72,8 @@ function draw() {
 }
 
 function scope() {
+  const PWM_HIGH_Y = layout.pwmHighY;
+  const PWM_LOW_Y = layout.pwmLowY;
   const xPeriod = dutyCycle === 1 ? width : max(MS_PER_SECOND * period / 2, 1);
 
   fill(PWM_FILL_COLOR);
@@ -110,10 +113,6 @@ function scope() {
 }
 
 function servo() {
-  const SERVO_X = 50;
-  const SERVO_Y = -20;
-  const SERVO_MAX_RPMS = 20;
-
   const curMillis = millis();
   const prevAngle = servoAngle;
   servoAngle += SERVO_MAX_RPMS * dutyCycle * (curMillis - prevMillis) / MS_PER_SECOND;
@@ -139,23 +138,29 @@ function servo() {
 
 function labels() {
   // labels
-  textSize(32);
-  fill(0, 102, 153, 100);
-  noStroke();
-  text("Period:", LABEL_X, PERIOD_LABEL_Y);
-  text("Frequency:", LABEL_X, FREQUENCY_LABEL_Y);
-  text("Duty Cycle:", LABEL_X, DUTY_CYCLE_LABEL_Y);
-  fill(200, 25, 25, 100);
-  text("Average:", LABEL_X, SHOW_AVERAGE_LABEL_Y);
+  {
+    const x = layout.labelX;
+    textSize(32);
+    fill(0, 102, 153, 100);
+    noStroke();
+    text("Period:", x, layout.periodLabelY);
+    text("Frequency:", x, layout.frequencyLabelY);
+    text("Duty Cycle:", x, layout.dutyCycleLabelY);
+    fill(200, 25, 25, 100);
+    text("Average:", x, layout.showAverageLabelY);
+  }
 
   // values
-  const frequency = MS_PER_SECOND / period;
-  fill(0, 102, 153);
-  text(`${formatNumber(period)} ms`, VALUE_X, PERIOD_LABEL_Y);
-  text(`${Math.round(frequency)} Hz`, VALUE_X, FREQUENCY_LABEL_Y);
-  text(`${Math.round(dutyCycle * 100)}%`, VALUE_X, DUTY_CYCLE_LABEL_Y);
-  fill(200, 25, 25);
-  text(`${formatNumber(dutyCycle * 5)} V`, VALUE_X, SHOW_AVERAGE_LABEL_Y);
+  {
+    const frequency = MS_PER_SECOND / period;
+    const x = layout.valueX;
+    fill(0, 102, 153);
+    text(`${formatNumber(period)} ms`, x, layout.periodLabelY);
+    text(`${Math.round(frequency)} Hz`, x, layout.frequencyLabelY);
+    text(`${Math.round(dutyCycle * 100)}%`, x, layout.dutyCycleLabelY);
+    fill(200, 25, 25);
+    text(`${formatNumber(dutyCycle * 5)} V`, x, layout.showAverageLabelY);
+  }
 }
 
 const formatNumber = n =>
