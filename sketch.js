@@ -118,14 +118,15 @@ function scope() {
 
 function servo() {
   const curMillis = millis();
-  const prevAngle = servoAngle;
   servoAngle += SERVO_MAX_RPMS * dutyCycle * (curMillis - prevMillis) / MS_PER_SECOND;
   prevMillis = curMillis;
 
-  translate(SERVO_X, SERVO_Y);
+  const elt = document.getElementById("servo-animation");
+  translate(elt.offsetLeft + elt.offsetWidth / 2, elt.offsetTop + elt.offsetHeight / 2);
+  scale(elt.offsetWidth / servoImage.width);
   imageMode(CENTER);
-  scale(1 / 9);
 
+  // const prevAngle = servoAngle;
   // console.info('from', prevAngle, 'to', servoAngle, 'in', (servoAngle - prevAngle) / 0.1)
   // for (let angle = prevAngle; (angle += 0.1) < servoAngle;) {
   //   push();

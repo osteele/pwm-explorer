@@ -1,7 +1,3 @@
-// Layout
-const SERVO_X = 50;
-const SERVO_Y = 50;
-
 let layout;
 
 function calculateLayout() {
