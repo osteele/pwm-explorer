@@ -21,7 +21,7 @@ h1 {
 #led-animation {
   display: inline-block;
   width: 60px;
-  height: 38px;
+  height: 35px;
   margin-left: 5px;
   background: url(assets/LED.png) no-repeat;
   background-size: contain;

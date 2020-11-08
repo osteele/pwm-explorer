@@ -19,7 +19,7 @@ let servoAngle = 0;
 
 function preload() {
   servoImage = loadImage("assets/servo-fan.png");
-  ledImage = loadImage("assets/LED.png");
+  ledImage = loadImage("assets/LED-glow.png");
 }
 
 function setup() {
@@ -108,16 +108,16 @@ function scope() {
 }
 
 function averageVoltage() {
-    const c = lerpColor(color('black'), color('red'), dutyCycle)
-    const [r, g, b] = c.levels;
-    const y = lerp(PWM_LOW_Y, PWM_HIGH_Y, dutyCycle);
-    noStroke();
-    fill(r, g, b, 100);
-    rect(0, y, width, PWM_LOW_Y - y);
-    noFill();
-    stroke(r, g, b, 200);
-    strokeWeight(4);
-    line(0, y, width, y);
+  const c = lerpColor(color('black'), color('red'), dutyCycle)
+  const [r, g, b] = c.levels;
+  const y = lerp(PWM_LOW_Y, PWM_HIGH_Y, dutyCycle);
+  noStroke();
+  fill(r, g, b, 100);
+  rect(0, y, width, PWM_LOW_Y - y);
+  noFill();
+  stroke(r, g, b, 200);
+  strokeWeight(4);
+  line(0, y, width, y);
 }
 
 function servo() {
@@ -151,20 +151,12 @@ function led() {
   const elt = document.getElementById("led-animation");
   const brightness = 255 * dutyCycle;
 
-  // push()
-  // translate(elt.offsetLeft, elt.offsetTop);
-  // imageMode(RIGHT)
-  // tint(brightness)
-  // scale(elt.offsetHeight / ledImage.height);
-  // image(ledImage, 0, 0);
-  // pop();
-
   push();
-  translate(elt.offsetLeft + elt.offsetWidth / 2, elt.offsetTop + elt.offsetHeight / 2);
-  noStroke();
-  fill(255, 0, 0, brightness / 2);
-  ellipse(-9, -10, 21, 27);
-  fill(255, 0, 0, brightness);
+  translate(elt.offsetLeft, elt.offsetTop);
+  imageMode(RIGHT);
+  scale(elt.offsetHeight / ledImage.height);
+  tint(255, brightness);
+  image(ledImage, 0, 0);
   pop();
 }
 
