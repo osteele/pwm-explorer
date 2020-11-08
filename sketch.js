@@ -5,8 +5,6 @@ const PWM_FILL_COLOR = '#0066BB80';
 const PWM_STROKE_COLOR = '#0066BB';
 const PWM_STROKE_WIDTH = 2;
 
-let headerHeight;
-
 // model options
 let period = 0.2; // in ms
 let dutyCycle = 0.5;
@@ -23,33 +21,31 @@ function preload() {
 }
 
 function setup() {
-  const header = document.getElementById("header");
-  headerHeight = header.offsetTop + header.offsetHeight;
   calculateLayout();
-  createCanvas(windowWidth, headerHeight + layout.showAverageLabelY + 50);
+  createCanvas(windowWidth, layout.headerHeight + layout.showAverageLabelY + 50);
 
-  const controlOffsetY = headerHeight - 18 + (IS_NARROW_WINDOW ? 25 : 0);
-
+  const x = layout.controlsX;
+  const dy = layout.controlOffsetY;
   const periodSlider = createSlider(.01, 2, period, 0.01)
-    .position(layout.controlsX, controlOffsetY + layout.periodLabelY)
+    .position(x, layout.periodLabelY + dy)
   setControlCallback(periodSlider, (value) => {
     period = value;
     frequencySlider.value(MS_PER_SECOND / period);
   });
 
   const frequencySlider = createSlider(MS_PER_SECOND / 2, MS_PER_SECOND / .01, MS_PER_SECOND / period)
-    .position(layout.controlsX, controlOffsetY + layout.frequencyLabelY)
+    .position(x, layout.frequencyLabelY + dy)
   setControlCallback(frequencySlider, (value) => {
     period = MS_PER_SECOND / value;
     periodSlider.value(period);
   });
 
   const dutyCycleSlider = createSlider(0, 1, dutyCycle, 0.01)
-    .position(layout.controlsX, controlOffsetY + layout.dutyCycleLabelY)
+    .position(x, layout.dutyCycleLabelY + dy)
   setControlCallback(dutyCycleSlider, (value) => dutyCycle = value);
 
   const showAverageCheckbox = createCheckbox('Show').class('show-average')
-    .position(layout.controlsX, controlOffsetY + layout.showAverageLabelY - 8)
+    .position(x, layout.showAverageLabelY + dy - 8)
   setControlCallback(showAverageCheckbox, () => {
     showAverageVoltage = showAverageCheckbox.checked();
   });
@@ -70,9 +66,12 @@ function setControlCallback(control, valueSetter) {
 function draw() {
   clear();
 
-  translate(0, headerHeight);
+  push();
+  translate(0, layout.headerHeight);
   scope();
   labels();
+  pop();
+
   servo();
 }
 
