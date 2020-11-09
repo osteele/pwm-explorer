@@ -9,18 +9,19 @@ h1 {
   margin-bottom: 15px;
 }
 
-#servo-animation {
+#servo-animation, #led-animation {
   display: inline-block;
+  width: 60px;
+}
+
+#servo-animation {
   position: relative;
   top: 5px;
-  width: 60px;
   height: 38px;
   margin-right: 5px;
 }
 
 #led-animation {
-  display: inline-block;
-  width: 60px;
   height: 35px;
   margin-left: 5px;
   background: url(assets/LED.png) no-repeat;
@@ -29,7 +30,12 @@ h1 {
 
 @media (max-width: 600px) {
   h1 {
+    font-size: 26px;
     margin: 0;
+  }
+
+  #servo-animation, #led-animation {
+    width: 50px;
   }
 }
 
