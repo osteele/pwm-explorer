@@ -108,9 +108,11 @@ function scope() {
 }
 
 function averageVoltage() {
-  const c = lerpColor(color('black'), color('red'), dutyCycle)
-  const [r, g, b] = c.levels;
+  const PWM_HIGH_Y = layout.pwmHighY;
+  const PWM_LOW_Y = layout.pwmLowY;
+  const [r, g, b] = lerpColor(color('black'), color('red'), dutyCycle).levels;
   const y = lerp(PWM_LOW_Y, PWM_HIGH_Y, dutyCycle);
+
   noStroke();
   fill(r, g, b, 100);
   rect(0, y, width, PWM_LOW_Y - y);
